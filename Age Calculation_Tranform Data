@@ -1,0 +1,11 @@
+abc:
+LOAD *,
+     if(Age >= 60, 'Senior',
+       if(Age >= 30, 'Mid Age',
+         if(Age >= 18, 'Youth', 
+           if(Age >= 14, 'Teen', 'Kid'
+         )
+       )
+     )
+   ) as AgeGroup
+FROM [lib://DataFiles/abc.csv];
