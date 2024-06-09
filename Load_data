@@ -1,0 +1,37 @@
+// Load data from the CSV file
+LOAD
+    @1 as Registrar,
+    @2 as [Enrollment Agency],
+    @3 as State,
+    @4 as District,
+    @5 as [Sub-District],
+    @6 as [Pin Code],
+    @7 as Gender,
+    @8 as Age,
+    @9 as [Aadhaar generated],
+    @10 as [Enrolment Rejected],
+    @11 as [Residents providing email],
+    @12 as [Residents providing Mobile]
+FROM [lib://DataFiles/abc.csv]
+(txt, codepage is 28591, no labels, delimiter is ',', msq);
+
+// Remove duplicates and handle null values
+NoConcatenate
+LOAD
+    Distinct
+    Registrar,
+    [Enrollment Agency],
+    If(Len(Trim(State))=0, 'Unknown', State) as State,
+    If(Len(Trim(District))=0, 'Unknown', District) as District,
+    If(Len(Trim([Sub-District]))=0, 'Unknown', [Sub-District]) as [Sub-District],
+    If(IsNull([Pin Code]), 0, [Pin Code]) as [Pin Code],
+    If(IsNull(Gender), 'Unknown', Gender) as Gender,
+    If(IsNull(Age), 0, Age) as Age,
+    If(IsNull([Aadhaar generated]), 0, [Aadhaar generated]) as [Aadhaar generated],
+    If(IsNull([Enrolment Rejected]), 0, [Enrolment Rejected]) as [Enrolment Rejected],
+    If(IsNull([Residents providing email]), 'No', [Residents providing email]) as [Residents providing email],
+    If(IsNull([Residents providing Mobile]), 'No', [Residents providing Mobile]) as [Residents providing Mobile]
+Resident abc;
+
+// Drop the temporary table
+Drop Table abc;
